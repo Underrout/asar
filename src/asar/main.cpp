@@ -558,6 +558,11 @@ void assemblefile(const char * filename, bool toplevel)
 	incsrcdepth++;
 	string absolutepath = filesystem->create_absolute_path(thisfilename, filename);
 
+	FILE *fp;
+	fp = fopen(".dependencies.txt", "a");
+	fprintf(fp, "%s\n", absolutepath.data());
+	fclose(fp);
+
 	if (file_included_once(absolutepath))
 	{
 		return;
