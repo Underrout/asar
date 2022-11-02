@@ -560,7 +560,7 @@ void assemblefile(const char * filename, bool toplevel)
 
 	FILE *fp;
 	fp = fopen(".dependencies.txt", "a");
-	fprintf(fp, "%s\n", absolutepath.data());
+	fprintf(fp, "%s %s\n", toplevel ? "assemble" : "incsrc", absolutepath.data());
 	fclose(fp);
 
 	if (file_included_once(absolutepath))

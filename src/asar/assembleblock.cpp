@@ -1905,6 +1905,14 @@ void assembleblock(const char * block, bool isspecialline)
 		if (!end) end=len;
 		if(start < 0) asar_throw_error(0, error_type_block, error_id_file_offset_out_of_bounds, dec(start).data(), name.data());
 		if (end < start || end > len || end < 0) asar_throw_error(0, error_type_block, error_id_file_offset_out_of_bounds, dec(end).data(), name.data());
+		
+		string absolutepath = filesystem->create_absolute_path(dir(thisfilename), name);
+
+		FILE *fp;
+		fp = fopen(".dependencies.txt", "a");
+		fprintf(fp, "incbin %d %d %s\n", start, end, absolutepath.data());
+		fclose(fp);
+		
 		if (numwords==4)
 		{
 			if (!confirmname(word[3]))
@@ -2000,6 +2008,14 @@ void assembleblock(const char * block, bool isspecialline)
 		else if (striend(par, ",rtl")) { itrim(par, "", ",rtl"); fliporder=true; }
 		string name=S safedequote(par);
 		autoptr<char*> tablecontents=readfile(name, thisfilename);
+
+		string absolutepath = filesystem->create_absolute_path(dir(thisfilename), name);
+
+		FILE *fp;
+		fp = fopen(".dependencies.txt", "a");
+		fprintf(fp, "table %s\n", absolutepath.data());
+		fclose(fp);
+
 		if (!tablecontents) asar_throw_error(0, error_type_block, vfile_error_to_error_id(asar_get_last_io_error()), name.data());
 		autoptr<char**> tablelines=split(tablecontents, "\n");
 		for (int i=0;i<256;i++) table.table[i]=(unsigned int)(((numopcodes+read2(0x00FFDE)+i)*0x26594131)|0x40028020);
