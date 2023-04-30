@@ -1909,8 +1909,8 @@ void assembleblock(const char * block, bool isspecialline)
 		string absolutepath = filesystem->create_absolute_path(dir(thisfilename), name);
 
 		FILE *fp;
-		fp = fopen(".dependencies.txt", "a");
-		fprintf(fp, "incbin %d %d %s\n", start, end, absolutepath.data());
+		fp = fopen(".dependencies", "a");
+		fprintf(fp, "%s\n", absolutepath.data());
 		fclose(fp);
 		
 		if (numwords==4)
@@ -2012,8 +2012,8 @@ void assembleblock(const char * block, bool isspecialline)
 		string absolutepath = filesystem->create_absolute_path(dir(thisfilename), name);
 
 		FILE *fp;
-		fp = fopen(".dependencies.txt", "a");
-		fprintf(fp, "table %s\n", absolutepath.data());
+		fp = fopen(".dependencies", "a");
+		fprintf(fp, "%s\n", absolutepath.data());
 		fclose(fp);
 
 		if (!tablecontents) asar_throw_error(0, error_type_block, vfile_error_to_error_id(asar_get_last_io_error()), name.data());

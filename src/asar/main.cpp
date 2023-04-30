@@ -559,8 +559,8 @@ void assemblefile(const char * filename, bool toplevel)
 	string absolutepath = filesystem->create_absolute_path(thisfilename, filename);
 
 	FILE *fp;
-	fp = fopen(".dependencies.txt", "a");
-	fprintf(fp, "%s %s\n", toplevel ? "assemble" : "incsrc", absolutepath.data());
+	fp = fopen(".dependencies", "a");
+	fprintf(fp, "%s\n", absolutepath.data());
 	fclose(fp);
 
 	if (file_included_once(absolutepath))

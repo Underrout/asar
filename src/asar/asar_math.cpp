@@ -401,8 +401,8 @@ template <size_t count> double asar_readfile()
 	string absolutepath = filesystem->create_absolute_path(dir(thisfilename), name);
 
 	FILE *fp;
-	fp = fopen(".dependencies.txt", "a");
-	fprintf(fp, "readfile %zu %zu %s\n", count, offset, absolutepath.data());
+	fp = fopen(".dependencies", "a");
+	fprintf(fp, "%s\n", absolutepath.data());
 	fclose(fp);
 	
 	unsigned int value = 0;
@@ -430,8 +430,8 @@ template <size_t count> double asar_canreadfile()
 	string absolutepath = filesystem->create_absolute_path(dir(thisfilename), name);
 
 	FILE *fp;
-	fp = fopen(".dependencies.txt", "a");
-	fprintf(fp, "canreadfile %zu %zu %s\n", length, offset, absolutepath.data());
+	fp = fopen(".dependencies", "a");
+	fprintf(fp, "%s\n", absolutepath.data());
 	fclose(fp);
 
 	if (fhandle == nullptr || fhandle->filehandle == INVALID_VIRTUAL_FILE_HANDLE) return 0;
@@ -464,8 +464,8 @@ static double asar_filestatus()
 	string absolutepath = filesystem->create_absolute_path(dir(thisfilename), name);
 
 	FILE *fp;
-	fp = fopen(".dependencies.txt", "a");
-	fprintf(fp, "filestatus %d %s\n", (int)res, absolutepath.data());
+	fp = fopen(".dependencies", "a");
+	fprintf(fp, "%s\n", absolutepath.data());
 	fclose(fp);
 
 	return res;
@@ -483,8 +483,8 @@ static double asar_filesize()
 	string absolutepath = filesystem->create_absolute_path(dir(thisfilename), name);
 
 	FILE *fp;
-	fp = fopen(".dependencies.txt", "a");
-	fprintf(fp, "filesize %d %s\n", (unsigned int)res, absolutepath.data());
+	fp = fopen(".dependencies", "a");
+	fprintf(fp, "%s\n", absolutepath.data());
 	fclose(fp);
 	
 	return res;
