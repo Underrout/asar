@@ -418,6 +418,13 @@ template <size_t count> double asar_readfile()
 	
 	unsigned char data[4] = { 0, 0, 0, 0 };
 	filesystem->read_file(fhandle->filehandle, data, offset, count);
+
+	string absolutepath = filesystem->create_absolute_path(dir(thisfilename), name);
+
+	FILE *fp;
+	fp = fopen(".dependencies", "a");
+	fprintf(fp, "%s\n", absolutepath.data());
+	fclose(fp);
 	
 	unsigned int value = 0;
 	for(size_t i = 0; i < count; i++)
@@ -440,6 +447,14 @@ template <size_t count> double asar_canreadfile()
 		length = get_double_argument();
 	}
 	cachedfile * fhandle = opencachedfile(name, false);
+
+	string absolutepath = filesystem->create_absolute_path(dir(thisfilename), name);
+
+	FILE *fp;
+	fp = fopen(".dependencies", "a");
+	fprintf(fp, "%s\n", absolutepath.data());
+	fclose(fp);
+
 	if (fhandle == nullptr || fhandle->filehandle == INVALID_VIRTUAL_FILE_HANDLE) return 0;
 	if (offset < 0 || offset + length > fhandle->filesize) return 0;
 	return 1;
@@ -448,7 +463,16 @@ template <size_t count> double asar_canreadfile()
 // returns 0 if the file is OK, 1 if the file doesn't exist, 2 if it couldn't be opened for some other reason
 static double asar_filestatus()
 {
-	cachedfile * fhandle = opencachedfile(get_string_argument(), false);
+	string name = get_string_argument();
+	cachedfile * fhandle = opencachedfile(name, false);
+
+	string absolutepath = filesystem->create_absolute_path(dir(thisfilename), name);
+
+	FILE *fp;
+	fp = fopen(".dependencies", "a");
+	fprintf(fp, "%s\n", absolutepath.data());
+	fclose(fp);
+
 	if (fhandle == nullptr || fhandle->filehandle == INVALID_VIRTUAL_FILE_HANDLE)
 	{
 		if (filesystem->get_last_error() == vfe_doesnt_exist)
@@ -469,6 +493,14 @@ static double asar_filesize()
 	string name = get_string_argument();
 	cachedfile * fhandle = opencachedfile(name, false);
 	if (fhandle == nullptr || fhandle->filehandle == INVALID_VIRTUAL_FILE_HANDLE) asar_throw_error(2, error_type_block, vfile_error_to_error_id(asar_get_last_io_error()), name.data());
+	
+	string absolutepath = filesystem->create_absolute_path(dir(thisfilename), name);
+
+	FILE *fp;
+	fp = fopen(".dependencies", "a");
+	fprintf(fp, "%s\n", absolutepath.data());
+	fclose(fp);
+	
 	return (double)fhandle->filesize;
 }
 
