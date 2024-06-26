@@ -288,9 +288,25 @@ EXPORT bool asar_patch(const char * patchloc, char * romdata_, int buflen, int *
 	asar_patch_begin(romdata_, buflen, romlen_, true);
 
 	virtual_filesystem new_filesystem;
-	new_filesystem.initialize(nullptr, 0);
+
+	FILE *file = fopen(".callisto", "r");
+
+	bool initialized = false;
+	if (file != NULL) {
+		char buffer[260];
+		if (fgets(buffer, sizeof(buffer), file) != NULL) {
+			const char* tempArray[1];
+			tempArray[0] = buffer;
+			new_filesystem.initialize(tempArray, 1);
+			initialized = true;
+		}
+	}
+
+	fclose(file);
+
+	if (!initialized) new_filesystem.initialize(nullptr, 0);
 	filesystem = &new_filesystem;
-	
+
 	asar_patch_main(patchloc);
 
 	new_filesystem.destroy();
@@ -338,6 +354,21 @@ EXPORT bool asar_patch_ex(const patchparams_base* params)
 	{
 		includepath_cstrs.append((const char*)includepaths[i]);
 	}
+
+	FILE *file = fopen(".callisto", "r");
+
+	if (file != NULL) {
+		char buffer[260];
+		if (fgets(buffer, sizeof(buffer), file) != NULL) {
+			char *copy = strdup(buffer);
+
+			if (copy != NULL) {
+				includepath_cstrs.append(copy);
+			}
+		}
+	}
+
+	fclose(file);
 
 	size_t includepath_count = (size_t)includepath_cstrs.count;
 	virtual_filesystem new_filesystem;
