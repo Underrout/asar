@@ -320,18 +320,21 @@ EXPORT bool asar_patch(const char *patchloc, char *romdata_, int buflen, int *ro
 
 		bool initialized = false;
 		if (file != NULL) {
-			char buffer[260];
+			char buffer[MAX_PATH];
 			if (fgets(buffer, sizeof(buffer), file) != NULL) {
-				const char* tempArray[1];
-				tempArray[0] = buffer;
-				new_filesystem.initialize(tempArray, 1);
+				const char* constBuffer = static_cast<const char*>(buffer);
+				const char** pConstBuffer = &constBuffer;
+				new_filesystem.initialize(pConstBuffer, 1);
 				initialized = true;
+				clidefines.create("CALLISTO_ASSEMBLING") = "1";
 			}
-		}
 
-		fclose(file);
+			fclose(file);
+		}
 		
-		if (!initialized) new_filesystem.initialize(nullptr, 0);
+		if (!initialized)
+			new_filesystem.initialize(nullptr, 0);
+
 		filesystem = &new_filesystem;
 
 		asar_patch_main(patchloc);
@@ -391,18 +394,16 @@ EXPORT bool asar_patch_ex(const patchparams_base *params)
 
 		FILE *file = fopen(".callisto", "r");
 
+		bool callisto_assembling = false;
+		char buffer[260];
 		if (file != NULL) {
-			char buffer[MAX_PATH];
 			if (fgets(buffer, sizeof(buffer), file) != NULL) {
-				char *copy = strdup(buffer);
-
-				if (copy != NULL) {
-					includepath_cstrs.append(copy);
-				}
+				includepath_cstrs.append(static_cast<const char*>(buffer));
+				callisto_assembling = true;
 			}
-		}
 
-		fclose(file);
+			fclose(file);
+		}
 
 		size_t includepath_count = (size_t)includepath_cstrs.count;
 		virtual_filesystem new_filesystem;
@@ -415,6 +416,9 @@ EXPORT bool asar_patch_ex(const patchparams_base *params)
 		}
 
 		clidefines.reset();
+		if (callisto_assembling) {
+			clidefines.create("CALLISTO_ASSEMBLING") = "1";
+		}
 		for (int i = 0; i < paramscurrent.definecount; ++i)
 		{
 			string name = (paramscurrent.additional_defines[i].name != nullptr ? paramscurrent.additional_defines[i].name : "");
