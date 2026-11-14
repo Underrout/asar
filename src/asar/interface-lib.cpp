@@ -13,6 +13,11 @@
 #include "dll_helper.h"
 #endif
 
+#if defined(__linux__) || defined(__APPLE__)
+	#include <limits.h>
+	#define MAX_PATH PATH_MAX
+#endif
+
 #include <cstdint>
 #if defined(CPPCLI)
 #define EXPORT extern "C"
